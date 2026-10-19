@@ -1,0 +1,88 @@
+# ============================================================
+# 本地运行时的「外部依赖服务」（PostgreSQL + Redis）
+#
+# 后端本体请用本地 Python 虚拟环境启动，详见 README「快速开始（本地）」：
+#   python -m venv .venv && .venv\Scripts\activate
+#   pip install -r requirements.txt
+#   uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+#
+# 常用命令：
+#   docker compose up -d                    # 启动 postgres + redis
+#   docker compose logs -f postgres         # 查看日志
+#   docker compose ps                       # 查看状态
+#   docker compose down                     # 停止（数据卷保留）
+#   docker compose down -v                  # 停止并清空数据（重置数据库）
+#   docker compose exec postgres psql -U postgres -d contract_review
+#
+# 端口映射与 .env 中的默认值一致：
+#   PostgreSQL 5433:5432（库 contract_review / 用户密码 postgres）
+#   Redis      6379:6379
+# ============================================================
+
+services:
+  # ── PostgreSQL ───────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: cr-postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: contract_review
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      TZ: Asia/Shanghai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d contract_review"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ── Redis（仅在启用 Celery 异步任务时才真正需要）────────
+  redis:
+    image: redis:6-alpine
+    container_name: cr-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Vite 前端（可选：--profile frontend）────────────────
+  # 后端运行在宿主机，容器内必须用 host.docker.internal 访问
+  frontend:
+    image: node:20-alpine
+    container_name: cr-frontend
+    profiles: ["frontend"]
+    restart: unless-stopped
+    working_dir: /app
+    # 首次启动装依赖；前端容器在 5173，需后端 8000 已在宿主机运行
+    command: sh -c "npm install --no-audit --no-fund && npm run dev -- --host 0.0.0.0 --port 5173"
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_TARGET=http://host.docker.internal:8000
+      # Windows/macOS 的 bind mount 收不到 inotify 事件，必须轮询才能触发热重载
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../frontend:/app
+      # 具名卷缓存 node_modules，避免每次 up 都从零安装
+      - frontend_node_modules:/app/node_modules
+
+volumes:
+  postgres_data:
+  redis_data:
+  frontend_node_modules:

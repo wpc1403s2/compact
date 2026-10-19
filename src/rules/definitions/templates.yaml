@@ -1,0 +1,47 @@
+templates:
+- id: tpl-purchase
+  name: 标准采购合同
+  category: purchase
+  description: 适用于商品采购的标准合同模板
+  required_clauses:
+  - 当事人信息
+  - 标的物描述
+  - 数量
+  - 价款
+  - 交付方式
+  - 质量标准
+  - 验收条款
+  - 付款方式
+  - 违约责任
+  - 争议解决
+  - 合同生效
+  enabled: true
+- id: tpl-labor
+  name: 劳动合同
+  category: labor
+  description: 适用于企业与员工签订的劳动合同
+  required_clauses:
+  - 劳动合同期限
+  - 工作内容和工作地点
+  - 工作时间和休息休假
+  - 劳动报酬
+  - 社会保险
+  - 劳动保护
+  - 劳动纪律
+  - 合同解除条件
+  - 违约责任
+  enabled: true
+- id: tpl-service
+  name: 技术服务合同
+  category: service
+  description: 适用于技术服务/咨询类合同
+  required_clauses:
+  - 服务内容
+  - 服务期限
+  - 服务费用
+  - 验收标准
+  - 知识产权归属
+  - 保密条款
+  - 违约责任
+  - 争议解决
+  enabled: true

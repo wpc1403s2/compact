@@ -1,0 +1,304 @@
+rules:
+- id: R001
+  name: 无限责任检查
+  description: 条款中包含可能导致无限责任的表述
+  severity: critical
+  category: liability
+  action: flag_high_risk
+  priority: 100
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: contains
+      value: 无限责任
+    - field: content
+      operator: contains
+      value: 承担全部损失
+    - field: content
+      operator: contains
+      value: 不设上限
+    - field: content
+      operator: contains
+      value: 无上限赔偿
+  metadata: {}
+- id: R002
+  name: 单方解除权检查
+  description: 一方拥有不对等的单方解除权利
+  severity: critical
+  category: termination
+  action: flag_high_risk
+  priority: 95
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: contains
+      value: 单方解除
+    - field: content
+      operator: contains
+      value: 单方终止
+    - field: content
+      operator: contains
+      value: 有权随时终止
+    - field: content
+      operator: contains
+      value: 任意解除
+  metadata: {}
+- id: R003
+  name: 违约金合理性检查
+  description: 违约金条款可能超出法律允许的合理范围
+  severity: warning
+  category: penalty
+  action: flag_medium_risk
+  priority: 80
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: matches
+      value: 违约金.*[三3]倍
+    - field: content
+      operator: matches
+      value: 赔偿.*全部.*损失
+    - field: content
+      operator: contains
+      value: 双倍赔偿
+  metadata: {}
+- id: R004
+  name: 格式条款无效性检查
+  description: 格式条款中可能包含无效条款
+  severity: critical
+  category: validity
+  action: flag_invalid
+  priority: 100
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: contains
+      value: 免除己方责任
+    - field: content
+      operator: contains
+      value: 排除对方主要权利
+    - field: content
+      operator: contains
+      value: 加重对方责任
+  metadata:
+    regulation: 《民法典》第497条
+- id: R005
+  name: 知识产权归属检查
+  description: 知识产权归属条款可能不明确或不合理
+  severity: warning
+  category: ip
+  action: flag_medium_risk
+  priority: 85
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: contains
+      value: 全部知识产权归
+    - field: content
+      operator: matches
+      value: 知识产权.*不可撤销.*转让
+    - field: content
+      operator: contains
+      value: 放弃全部知识产权
+  metadata: {}
+- id: R006
+  name: 保密期限检查
+  description: 保密义务期限过长或无期限限制
+  severity: warning
+  category: confidentiality
+  action: flag_medium_risk
+  priority: 70
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: contains
+      value: 永久保密
+    - field: content
+      operator: contains
+      value: 保密义务不因合同终止而终止
+    - field: content
+      operator: matches
+      value: 保密.*[十1][零0]年以上
+  metadata: {}
+- id: R007
+  name: 自动续约检查
+  description: 合同包含自动续约条款
+  severity: info
+  category: renewal
+  action: flag_attention
+  priority: 50
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: contains
+      value: 自动续约
+    - field: content
+      operator: contains
+      value: 自动续期
+    - field: content
+      operator: contains
+      value: 默认续签
+  metadata: {}
+- id: R008
+  name: 模糊条款检查
+  description: 条款表述模糊，缺乏确定性
+  severity: info
+  category: clarity
+  action: flag_attention
+  priority: 40
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: contains
+      value: 酌情处理
+    - field: content
+      operator: contains
+      value: 另行协商
+    - field: content
+      operator: contains
+      value: 视情况而定
+    - field: content
+      operator: contains
+      value: 适当的
+  metadata: {}
+- id: R010
+  name: 测试规则
+  description: ''
+  severity: info
+  category: other
+  action: flag_attention
+  priority: 0
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: contains
+      value: test
+  metadata: {}
+- id: R011
+  name: 付款期限检查
+  description: ''
+  severity: warning
+  category: penalty
+  action: flag_attention
+  priority: 0
+  enabled: true
+  condition:
+    operator: or
+    conditions:
+    - field: content
+      operator: contains
+      value: 付款期限
+  metadata: {}
+agent_risk_rules:
+- name: unlimited_liability
+  keywords:
+  - 无限责任
+  - 不限于
+  - 承担全部
+  - 无上限
+  - 不设限
+  risk_level: high
+  description: 条款包含无限责任相关表述
+- name: unilateral_termination
+  keywords:
+  - 单方解除
+  - 单方终止
+  - 有权随时
+  - 任意解除
+  risk_level: high
+  description: 条款包含单方解除权
+- name: unfair_penalty
+  keywords:
+  - 违约金不低于
+  - 双倍赔偿
+  - 三倍赔偿
+  - 全额赔偿
+  risk_level: medium
+  description: 违约金条款可能不合理
+- name: auto_renewal
+  keywords:
+  - 自动续约
+  - 自动续期
+  - 默认续签
+  risk_level: medium
+  description: 包含自动续约条款
+- name: vague_terms
+  keywords:
+  - 酌情处理
+  - 另行协商
+  - 视情况而定
+  - 合理范围
+  risk_level: low
+  description: 条款表述模糊，存在歧义风险
+- name: exclusive_jurisdiction
+  keywords:
+  - 仅由.*法院管辖
+  - 排他性管辖
+  risk_level: medium
+  description: 管辖权条款可能对一方不利
+compliance_rules:
+- name: invalid_exclusion
+  keywords:
+  - 免除己方责任
+  - 排除对方主要权利
+  - 加重对方责任
+  regulation: 《民法典》第497条
+  issue: 格式条款中免除己方责任、排除对方主要权利的条款无效
+- name: oral_modification
+  keywords:
+  - 口头变更有效
+  - 口头修改
+  regulation: 《民法典》第490条
+  issue: 合同变更应采用书面形式，口头变更可能产生争议
+- name: excessive_penalty
+  keywords:
+  - 违约金超过损失的30%
+  - 违约金超过百分之三十
+  regulation: 《劳动合同法》第19条
+  issue: 约定的违约金过分高于造成的损失，当事人可以请求减少
+- name: labor_probation
+  keywords:
+  - 试用期超过6个月
+  - 试用期超过六个月
+  regulation: 《劳动合同法》第19条
+  issue: 劳动合同期限三年以上的，试用期不得超过六个月
+required_clauses:
+  general:
+  - 当事人信息
+  - 标的/服务内容
+  - 价款/报酬
+  - 履行期限
+  - 违约责任
+  - 争议解决
+  labor:
+  - 劳动合同期限
+  - 工作内容和工作地点
+  - 工作时间和休息休假
+  - 劳动报酬
+  - 社会保险
+  - 劳动保护
+  sale:
+  - 标的物描述
+  - 数量
+  - 价款
+  - 交付方式
+  - 质量标准
+  - 验收条款
