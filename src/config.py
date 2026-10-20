@@ -10,12 +10,15 @@ LLM 提供商通过 LLM_PROVIDER 选择：auto | contract | minimax | openai
 
 from __future__ import annotations
 
+import logging
 import os
 from pathlib import Path
 
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 
 def _env(key: str, default: str = "") -> str:
@@ -56,7 +59,7 @@ class Settings:
             "CONTRACT_LLM_BASE_URL",
             "https://dashscope.aliyuncs.com/compatible-mode/v1",
         )
-        self.CONTRACT_LLM_MODEL: str = _env("CONTRACT_LLM_MODEL", "qwen-max")
+        self.CONTRACT_LLM_MODEL: str = _env("CONTRACT_LLM_MODEL", "qwen3.8-max-0902")
 
         # MiniMax
         self.MINIMAX_API_KEY: str = _env("MINIMAX_API_KEY", "")
@@ -79,12 +82,12 @@ class Settings:
                 self.CONTRACT_LLM_MODEL = legacy_model
 
         # ── LLM 调用参数 ────────────────────────────────────
-        self.LLM_TIMEOUT: int = _env_int("LLM_TIMEOUT", 60)
-        self.LLM_MAX_RETRIES: int = _env_int("LLM_MAX_RETRIES", 2)
+        self.LLM_TIMEOUT: int = _env_int("LLM_TIMEOUT", 30)
+        self.LLM_MAX_RETRIES: int = _env_int("LLM_MAX_RETRIES", 0)
         self.LLM_TEMPERATURE: float = _env_float("LLM_TEMPERATURE", 0.1)
         self.LLM_MAX_TOKENS: int = _env_int("LLM_MAX_TOKENS", 4096)
         self.CIRCUIT_BREAKER_THRESHOLD: int = _env_int("CIRCUIT_BREAKER_THRESHOLD", 3)
-        self.CIRCUIT_RECOVERY_TIMEOUT: int = _env_int("CIRCUIT_RECOVERY_TIMEOUT", 60)
+        self.CIRCUIT_RECOVERY_TIMEOUT: int = _env_int("CIRCUIT_RECOVERY_TIMEOUT", 30)
 
         # ── 应用基础配置 ────────────────────────────────────
         self.APP_HOST: str = _env("APP_HOST", "0.0.0.0")
@@ -165,7 +168,7 @@ def get_llm(settings_obj: Settings | None = None):
     from langchain_openai import ChatOpenAI
 
     s = settings_obj or settings
-    provider = s.LLM_PROVIDER
+    provider = "contract"
 
     if provider == "auto":
         candidates = _PROVIDER_SPECS
@@ -180,12 +183,21 @@ def get_llm(settings_obj: Settings | None = None):
     for name, key_attr, base_attr, model_attr in candidates:
         api_key = getattr(s, key_attr)
         if _is_real_key(api_key):
+            base_url = getattr(s, base_attr)
+            model = getattr(s, model_attr)
+            # 诊断日志：打印选中的 provider/base_url/model（不含 API key）
+            logger.info(
+                "LLM 客户端已构造: provider=%s base_url=%s model=%s timeout=%ss",
+                name, base_url, model, s.LLM_TIMEOUT,
+            )
             return ChatOpenAI(
-                model=getattr(s, model_attr),
+                model=model,
                 api_key=api_key,
-                base_url=getattr(s, base_attr),
+                base_url=base_url,
                 temperature=s.LLM_TEMPERATURE,
                 max_tokens=s.LLM_MAX_TOKENS,
+                request_timeout=s.LLM_TIMEOUT,
+                max_retries=0,
             )
         if provider != "auto":
             raise ValueError(

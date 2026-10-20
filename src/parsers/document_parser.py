@@ -9,9 +9,6 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from docx import Document as DocxDocument
-from PyPDF2 import PdfReader
-
 
 class DocumentParser:
     """统一的文档解析入口，根据文件后缀自动选择解析策略。"""
@@ -35,6 +32,8 @@ class DocumentParser:
             return path.read_text(encoding="utf-8")
 
     def _parse_pdf(self, path: Path) -> str:
+        from PyPDF2 import PdfReader
+
         reader = PdfReader(str(path))
         pages: list[str] = []
         for page in reader.pages:
@@ -44,6 +43,8 @@ class DocumentParser:
         return "\n\n".join(pages)
 
     def _parse_docx(self, path: Path) -> str:
+        from docx import Document as DocxDocument
+
         doc = DocxDocument(str(path))
         paragraphs: list[str] = []
         for para in doc.paragraphs:

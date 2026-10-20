@@ -57,7 +57,7 @@ def _secret_value(secret) -> str:
 
 
 _REAL_KEYS = {
-    "CONTRACT_LLM_API_KEY": "sk-contract-real",
+    "CONTRACT_LLM_API_KEY": "sk-c7793b13dc54417ba7a1920f0a49526e",
     "MINIMAX_API_KEY": "sk-minimax-real",
     "OPENAI_API_KEY": "sk-openai-real",
 }
@@ -72,13 +72,14 @@ def test_contract_provider_selected_explicitly(monkeypatch):
         LLM_PROVIDER="contract",
         CONTRACT_LLM_API_KEY=_REAL_KEYS["CONTRACT_LLM_API_KEY"],
         CONTRACT_LLM_BASE_URL="https://dashscope.aliyuncs.com/compatible-mode/v1",
-        CONTRACT_LLM_MODEL="qwen-max",
+        CONTRACT_LLM_MODEL="qwen3.8-max-0902",
     )
     llm = cfg.get_llm()
-    result=llm.invoke([("user", "你好")])
+    # result=llm.invoke([("user", "你好")])
+    result=llm.invoke("你好")
     print(result.content)
-    assert llm.model_name == "qwen-max"
-    assert _secret_value(llm.openai_api_key) == "sk-contract-real"
+    assert llm.model_name == "qwen3.8-max-0902"
+    assert _secret_value(llm.openai_api_key) == "sk-c7793b13dc54417ba7a1920f0a49526e"
     assert "dashscope" in llm.openai_api_base
 
 
@@ -169,7 +170,7 @@ def test_auto_skips_placeholder_picks_real(monkeypatch):
         OPENAI_API_KEY=_REAL_KEYS["OPENAI_API_KEY"],
     )
     llm = cfg.get_llm()
-    assert _secret_value(llm.openai_api_key) == "sk-openai-real"
+    assert _secret_value(llm.openai_api_key) == "sk-c7793b13dc54417ba7a1920f0a49526e"
 
 
 def test_explicit_provider_without_key_raises(monkeypatch):
@@ -193,7 +194,7 @@ def test_contract_default_base_and_model(monkeypatch):
         CONTRACT_LLM_API_KEY=_REAL_KEYS["CONTRACT_LLM_API_KEY"],
     )
     llm = cfg.get_llm()
-    assert llm.model_name == "qwen-max"
+    assert llm.model_name == "qwen3.8-max-0902"
     assert "dashscope" in llm.openai_api_base
 
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import AsyncGenerator
 
+from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -39,14 +40,21 @@ def init_db(database_url: str) -> None:
 
     pool_size = int(settings.DB_POOL_SIZE)
     max_overflow = int(settings.DB_MAX_OVERFLOW)
+    backend = make_url(database_url).get_backend_name()
+    engine_options = {
+        "pool_pre_ping": True,
+        "pool_recycle": 1800,
+    }
+    if backend != "sqlite":
+        engine_options.update(
+            pool_size=pool_size,
+            max_overflow=max_overflow,
+        )
 
     new_engine = create_async_engine(
         database_url,
         echo=False,
-        pool_size=pool_size,
-        max_overflow=max_overflow,
-        pool_pre_ping=True,
-        pool_recycle=1800,  # 30 分钟回收，防 PostgreSQL idle 断连
+        **engine_options,
     )
     engine = new_engine
     async_session_factory = async_sessionmaker(
@@ -55,8 +63,10 @@ def init_db(database_url: str) -> None:
         expire_on_commit=False,
     )
     logger.info(
-        "数据库连接已初始化: pool_size=%d max_overflow=%d",
-        pool_size, max_overflow,
+        "数据库连接已初始化: backend=%s pool_size=%s max_overflow=%s",
+        backend,
+        pool_size if backend != "sqlite" else "default",
+        max_overflow if backend != "sqlite" else "default",
     )
 
 

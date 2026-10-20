@@ -65,7 +65,7 @@ class SuggestionAgent:
         if self.llm is None:
             self.llm = get_llm()
 
-    async def __call__(self, state: ContractReviewState) -> dict:
+    async def run(self, state: ContractReviewState) -> dict:
         """LangGraph节点函数：生成修改建议。"""
         logger.info("修改建议Agent开始处理 review_id=%s", state.review_id)
 

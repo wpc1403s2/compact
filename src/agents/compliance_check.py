@@ -131,7 +131,7 @@ class ComplianceCheckAgent:
         if self.llm is None:
             self.llm = get_llm()
 
-    async def __call__(self, state: ContractReviewState) -> dict:
+    async def run(self, state: ContractReviewState) -> dict:
         """LangGraph节点函数：执行合规检查。"""
         logger.info("合规检查Agent开始处理 review_id=%s", state.review_id)
 

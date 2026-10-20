@@ -124,7 +124,7 @@ class RiskIdentificationAgent:
         if self.llm is None:
             self.llm = get_llm()
 
-    async def __call__(self, state: ContractReviewState) -> dict:
+    async def run(self, state: ContractReviewState) -> dict:
         """LangGraph节点函数：执行风险识别。"""
         logger.info("风险识别Agent开始处理 review_id=%s", state.review_id)
 

@@ -93,28 +93,28 @@ async def _run_seed_if_needed(conn) -> None:
 
 # ── 应用生命周期 ──────────────────────────────────────────────
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """启动时初始化数据库 + 链路追踪，关闭时释放连接。"""
-    init_tracing()
-
-    if settings.DATABASE_URL:
-        try:
-            db_session.init_db(settings.DATABASE_URL)
-            async with db_session.engine.begin() as conn:
-                await conn.run_sync(Base.metadata.create_all)
-                await _run_migrations(conn)
-                await _run_seed_if_needed(conn)
-            logger.info("数据库已初始化")
-        except Exception as e:
-            logger.warning("数据库连接失败，使用内存存储模式: %s", e)
-            # 重置数据库状态，确保 get_db 返回 None
-            db_session.engine = None
-            db_session.async_session_factory = None
-    else:
-        logger.warning("未配置 DATABASE_URL，使用内存存储模式")
-    yield
-    await db_session.close_db()
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     """启动时初始化数据库 + 链路追踪，关闭时释放连接。"""
+#     init_tracing()
+#
+#     if settings.DATABASE_URL:
+#         try:
+#             db_session.init_db(settings.DATABASE_URL)
+#             async with db_session.engine.begin() as conn:
+#                 await conn.run_sync(Base.metadata.create_all)
+#                 await _run_migrations(conn)
+#                 await _run_seed_if_needed(conn)
+#             logger.info("数据库已初始化")
+#         except Exception as e:
+#             logger.warning("数据库连接失败，使用内存存储模式: %s", e)
+#             # 重置数据库状态，确保 get_db 返回 None
+#             db_session.engine = None
+#             db_session.async_session_factory = None
+#     else:
+#         logger.warning("未配置 DATABASE_URL，使用内存存储模式")
+#     yield
+#     await db_session.close_db()
 
 
 # ── 应用工厂 ──────────────────────────────────────────────────
@@ -132,7 +132,7 @@ def create_app() -> FastAPI:
         title="多Agent智能合同审查系统",
         description="基于LangGraph的四Agent流水线合同审查API",
         version="1.3.0",
-        lifespan=lifespan,
+        # lifespan=lifespan,
     )
 
     # CORS — 生产环境应限制为指定域名

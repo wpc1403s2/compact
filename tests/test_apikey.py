@@ -88,7 +88,8 @@ def probe(provider: str, verbose: bool = True) -> tuple[bool, str]:
             print(f"结果     : {msg}")
         return False, msg
 
-    url = normalize_base(base_url) + "/chat/completions"
+    # url = normalize_base(base_url) + "/chat/completions"
+    url = normalize_base(base_url)
     payload = {
         "model": model,
         "messages": [{"role": "user", "content": "hi"}],

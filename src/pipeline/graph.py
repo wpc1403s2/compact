@@ -3,7 +3,7 @@ LangGraph流水线编排 — 四Agent流水线 + 人机协同。
 
 核心设计：
 1. 使用LangGraph StateGraph构建有向图
-2. 四个Agent节点顺序执行
+2. 条款提取后并发执行风险识别与合规检查，再生成修改建议
 3. 人机协同通过interrupt实现
 4. 支持checkpoint持久化，可从任意步骤恢复
 5. 条件路由：根据风险等级决定是否需要人工审核
@@ -18,8 +18,10 @@ LangGraph流水线编排 — 四Agent流水线 + 人机协同。
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import datetime
+from time import perf_counter
 from typing import Any, Awaitable, Callable, Literal
 
 from langgraph.graph import END, StateGraph
@@ -94,6 +96,7 @@ def _with_progress(step_key: str, agent: Any) -> Callable[..., Awaitable[dict]]:
     label = STEP_LABELS.get(step_key, step_key)
 
     async def _wrapped(state: ContractReviewState) -> dict:
+        started_at = perf_counter()
         event = StepEvent(
             step=step_key,
             status="running",
@@ -110,12 +113,14 @@ def _with_progress(step_key: str, agent: Any) -> Callable[..., Awaitable[dict]]:
                 logger.exception("进度回调异常 step=%s", step_key)
 
         try:
-            result = await agent(state)
+            result = await agent.run(state)
         except Exception as e:
+            elapsed = perf_counter() - started_at
             event.status = "error"
             event.finished_at = _now()
             event.message = f"{label}失败: {e}"
             state.errors.append(f"{step_key}: {e}")
+            logger.exception("流水线步骤失败 step=%s elapsed=%.2fs", step_key, elapsed)
             coro = _fire_progress(state)
             if coro is not None:
                 try:
@@ -135,6 +140,8 @@ def _with_progress(step_key: str, agent: Any) -> Callable[..., Awaitable[dict]]:
         event.status = "done"
         event.finished_at = _now()
         event.message = _step_message(state, step_key)
+        elapsed = perf_counter() - started_at
+        logger.info("流水线步骤完成 step=%s elapsed=%.2fs", step_key, elapsed)
         try:
             idx = PIPELINE_STEPS.index(step_key)
             state.progress = round((idx + 1) / len(PIPELINE_STEPS), 3)
@@ -148,9 +155,125 @@ def _with_progress(step_key: str, agent: Any) -> Callable[..., Awaitable[dict]]:
             except Exception:
                 logger.exception("进度回调异常 step=%s", step_key)
 
-        return result or {}
+        updates = dict(result or {})
+        updates.update(
+            step_log=state.step_log,
+            current_step=state.current_step,
+            progress=state.progress,
+            errors=state.errors,
+        )
+        return updates
 
     _wrapped.__name__ = f"wrapped_{step_key}"
+    return _wrapped
+
+
+def _with_parallel_progress(
+    step_keys: tuple[str, str],
+    agents: tuple[Any, Any],
+) -> Callable[..., Awaitable[dict]]:
+    """并发运行互不依赖的 Agent，并统一更新共享进度状态。"""
+
+    async def _wrapped(state: ContractReviewState) -> dict:
+        started_at = perf_counter()
+        events = {
+            key: StepEvent(
+                step=key,
+                status="running",
+                message=f"{STEP_LABELS[key]}中...",
+                started_at=_now(),
+            )
+            for key in step_keys
+        }
+        state.step_log.extend(events.values())
+        state.current_step = "+".join(step_keys)
+        coro = _fire_progress(state)
+        if coro is not None:
+            try:
+                await coro
+            except Exception:
+                logger.exception("进度回调异常 steps=%s", state.current_step)
+
+        results = await asyncio.gather(
+            *(agent.run(state.model_copy(deep=True)) for agent in agents),
+            return_exceptions=True,
+        )
+        updates: dict[str, Any] = {}
+        errors: list[str] = []
+        failures: list[BaseException] = []
+
+        for step_key, result in zip(step_keys, results):
+            event = events[step_key]
+            event.finished_at = _now()
+            if isinstance(result, BaseException):
+                event.status = "error"
+                event.message = f"{STEP_LABELS[step_key]}失败: {result}"
+                failures.append(result)
+                errors.append(f"{step_key}: {result}")
+                continue
+
+            result = result or {}
+            for field, value in result.items():
+                if field == "errors":
+                    errors.extend(error for error in value if error not in errors)
+                elif field in updates and updates[field] != value:
+                    raise RuntimeError(f"并行步骤返回了冲突字段: {field}")
+                else:
+                    updates[field] = value
+            event.status = "done"
+            event.message = _step_message(
+                state.model_copy(update=updates),
+                step_key,
+            )
+
+        if errors:
+            updates["errors"] = list(dict.fromkeys([*state.errors, *errors]))
+
+        if failures:
+            failed_steps = ", ".join(
+                key for key in step_keys if events[key].status == "error"
+            )
+            state.errors = updates.get("errors", state.errors)
+            state.current_step = ""
+            elapsed = perf_counter() - started_at
+            logger.error("并行步骤失败 steps=%s elapsed=%.2fs", failed_steps, elapsed)
+            coro = _fire_progress(state)
+            if coro is not None:
+                try:
+                    await coro
+                except Exception:
+                    logger.exception("进度回调异常 steps=%s", failed_steps)
+            raise RuntimeError(f"并行步骤失败: {failed_steps}") from failures[0]
+
+        for field, value in updates.items():
+            if hasattr(state, field):
+                setattr(state, field, value)
+
+        completed_index = max(PIPELINE_STEPS.index(key) for key in step_keys)
+        state.progress = round((completed_index + 1) / len(PIPELINE_STEPS), 3)
+        state.current_step = ""
+        updates.update(
+            step_log=state.step_log,
+            current_step=state.current_step,
+            progress=state.progress,
+            errors=state.errors,
+        )
+        elapsed = perf_counter() - started_at
+        logger.info(
+            "并行步骤完成 steps=%s elapsed=%.2fs",
+            ",".join(step_keys),
+            elapsed,
+        )
+        coro = _fire_progress(state)
+        if coro is not None:
+            try:
+                await coro
+            except Exception:
+                logger.exception("进度回调异常 steps=%s", ",".join(step_keys))
+
+        return updates
+
+    _wrapped.__name__ = "wrapped_parallel_analysis"
     return _wrapped
 
 
@@ -233,7 +356,7 @@ def build_review_graph(
     构建合同审查流水线的LangGraph有向图。
 
     流程：
-    clause_extraction → risk_identification → compliance_check
+    clause_extraction → (risk_identification + compliance_check)
         → suggestion → [human_review | complete] → END
 
     Args:
@@ -252,8 +375,13 @@ def build_review_graph(
     graph = StateGraph(ContractReviewState)
 
     graph.add_node("clause_extraction", _with_progress("clause_extraction", clause_agent))
-    graph.add_node("risk_identification", _with_progress("risk_identification", risk_agent))
-    graph.add_node("compliance_check", _with_progress("compliance_check", compliance_agent))
+    graph.add_node(
+        "risk_compliance_analysis",
+        _with_parallel_progress(
+            ("risk_identification", "compliance_check"),
+            (risk_agent, compliance_agent),
+        ),
+    )
     graph.add_node("suggestion", _with_progress("suggestion", suggestion_agent))
     graph.add_node("complete", _complete_with_progress(complete_node))
 
@@ -262,9 +390,8 @@ def build_review_graph(
         graph.add_node("process_feedback", process_human_feedback)
 
     graph.set_entry_point("clause_extraction")
-    graph.add_edge("clause_extraction", "risk_identification")
-    graph.add_edge("risk_identification", "compliance_check")
-    graph.add_edge("compliance_check", "suggestion")
+    graph.add_edge("clause_extraction", "risk_compliance_analysis")
+    graph.add_edge("risk_compliance_analysis", "suggestion")
 
     if with_human_review:
         graph.add_conditional_edges(

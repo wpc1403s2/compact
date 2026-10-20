@@ -10,6 +10,7 @@ import pytest
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from src.db import session as db_session_module
 from src.db.models import Base
 from src.db.crud import save_review, get_review, update_feedback
 from src.pipeline.state import (
@@ -239,3 +240,19 @@ async def test_update_feedback_replaces_old(db_session: AsyncSession):
     assert loaded.status == ReviewStatus.REJECTED
     assert loaded.human_feedback.reviewer == "李四"
     assert loaded.human_feedback.decision == "reject"
+
+
+@pytest.mark.asyncio
+async def test_init_db_supports_in_memory_sqlite(monkeypatch):
+    """Engine initialization omits queue-pool options unsupported by SQLite StaticPool."""
+    monkeypatch.setattr(db_session_module, "engine", None)
+    monkeypatch.setattr(db_session_module, "async_session_factory", None)
+
+    db_session_module.init_db("sqlite+aiosqlite:///:memory:")
+    try:
+        assert db_session_module.engine is not None
+        async with db_session_module.engine.connect() as connection:
+            result = await connection.exec_driver_sql("SELECT 1")
+            assert result.scalar_one() == 1
+    finally:
+        await db_session_module.close_db()

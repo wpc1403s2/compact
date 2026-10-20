@@ -87,7 +87,7 @@ async def with_timeout(coro, timeout_seconds: float) -> Any:
 async def resilient_call(
     func: Callable,
     *args,
-    max_retries: int = 2,
+    max_retries: int = 0,
     base_delay: float = 1.0,
     timeout_seconds: float = 60.0,
     circuit_breaker: CircuitBreaker | None = None,
@@ -115,23 +115,42 @@ async def resilient_call(
         if circuit_breaker and circuit_breaker.is_open:
             raise RuntimeError(f"熔断器已打开，拒绝调用（连续失败 {circuit_breaker._failure_count} 次）")
 
+        attempt_started_at = time.perf_counter()
         try:
             result = await with_timeout(func(*args, **kwargs), timeout_seconds)
             if circuit_breaker:
                 circuit_breaker.record_success()
+            logger.info(
+                "调用成功 attempt=%d/%d elapsed=%.2fs",
+                attempt + 1,
+                max_retries + 1,
+                time.perf_counter() - attempt_started_at,
+            )
             return result
 
         except asyncio.TimeoutError:
             last_exception = RuntimeError(f"调用超时（{timeout_seconds}秒）")
             if circuit_breaker:
                 circuit_breaker.record_failure()
-            logger.warning("调用超时 attempt=%d/%d timeout=%.1fs", attempt + 1, max_retries + 1, timeout_seconds)
+            logger.warning(
+                "调用超时 attempt=%d/%d timeout=%.1fs elapsed=%.2fs",
+                attempt + 1,
+                max_retries + 1,
+                timeout_seconds,
+                time.perf_counter() - attempt_started_at,
+            )
 
         except Exception as e:
             last_exception = e
             if circuit_breaker:
                 circuit_breaker.record_failure()
-            logger.warning("调用失败 attempt=%d/%d: %s", attempt + 1, max_retries + 1, str(e))
+            logger.warning(
+                "调用失败 attempt=%d/%d elapsed=%.2fs: %s",
+                attempt + 1,
+                max_retries + 1,
+                time.perf_counter() - attempt_started_at,
+                str(e),
+            )
 
         # 指数退避
         if attempt < max_retries:

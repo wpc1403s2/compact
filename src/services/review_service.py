@@ -253,7 +253,6 @@ class ReviewService:
         with_human_review: bool = True,
     ) -> tuple[str, list[dict]]:
         """批量创建审查任务。
-
         Args:
             files: [(filename, content), ...] 文件列表
             with_human_review: 是否启用人工审核
@@ -453,3 +452,10 @@ class ReviewService:
             "reject": ReviewStatus.REJECTED,
         }
         return mapping.get(decision, ReviewStatus.COMPLETED)
+
+if __name__ == '__main__':
+    review_service = ReviewService()
+    review_service.start_review(
+        files=[("test.pdf", b"test")],
+        with_human_review=True,
+    )

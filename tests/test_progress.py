@@ -119,7 +119,7 @@ async def test_progress_wrapper_records_events():
 
     # 打桩一个极简 agent：返回一个 clause
     class FakeAgent:
-        async def __call__(self, state):
+        async def run(self, state):
             return {"contract_type": "采购合同", "clauses": []}
 
     set_progress_callback("rid-1", cb)

@@ -9,9 +9,8 @@
 5. 输出结构化条款数据
 
 弹性机制：
-- LLM 调用超时 60 秒
-- 失败自动重试 2 次（指数退避）
-- 连续失败 3 次后熔断，直接走回退方案
+- LLM 调用超时和重试次数由配置控制
+- LLM 失败时使用规则切分回退
 """
 
 from __future__ import annotations
@@ -92,7 +91,7 @@ class ClauseExtractionAgent:
         if self.llm is None:
             self.llm = get_llm()
 
-    async def __call__(self, state: ContractReviewState) -> dict:
+    async def run(self, state: ContractReviewState) -> dict:
         """LangGraph节点函数：执行条款提取。"""
         logger.info("条款提取Agent开始处理 review_id=%s", state.review_id)
 
@@ -143,8 +142,8 @@ class ClauseExtractionAgent:
             return {
                 "errors": state.errors + [f"条款提取失败: {str(e)}"],
                 "status": ReviewStatus.IN_PROGRESS,
-                "raw_text": state.raw_text or "",
-                "clauses": self._fallback_extraction(state.raw_text or ""),
+                "raw_text": raw_text or "",
+                "clauses": self._fallback_extraction(raw_text or ""),
                 "entities": [],
                 "contract_type": "未识别",
             }
