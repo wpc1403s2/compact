@@ -147,13 +147,13 @@ class RiskIdentificationAgent:
             rule_findings = self._rule_based_scan(state.clauses)
 
             # self._ensure_llm()
-            llm_findings = await resilient_call(
-                self._llm_analysis,
-                state.clauses,
-                max_retries=settings.LLM_MAX_RETRIES,
-                timeout_seconds=settings.LLM_TIMEOUT,
-                circuit_breaker=self._breaker,
-            )
+            # llm_findings = await resilient_call(
+            #     self._llm_analysis,
+            #     state.clauses,
+            #     max_retries=settings.LLM_MAX_RETRIES,
+            #     timeout_seconds=settings.LLM_TIMEOUT,
+            #     circuit_breaker=self._breaker,
+            # )
 
             llm_findings= await self._llm_analysis(state.clauses)
 

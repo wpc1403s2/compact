@@ -17,6 +17,8 @@ from __future__ import annotations
 
 import logging
 import asyncio
+from pathlib import Path
+
 import dotenv
 
 dotenv.load_dotenv()
@@ -196,14 +198,14 @@ class ClauseExtractionAgent:
 
 def read_file_node() -> dict:
     """读取文本文件内容的节点"""
-    file_path = r"D:\compact\sample-contracts\sample_labor_contract.txt"
+# 软路径：基于本文件定位项目根目录（src/abc/01.py 向上两级），不依赖启动目录
+    file_path = Path(__file__).resolve().parents[2] / "sample-contracts" / "sample_purchase_contract.txt"
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
         return {"text_content": content}
     except Exception as e:
         return {"text_content": f"读取文件出错: {str(e)}"}
-
 if __name__ == '__main__':
     Agent=ClauseExtractionAgent()
     asyncio.run(Agent.run(ContractReviewState()))

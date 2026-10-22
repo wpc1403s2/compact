@@ -9,7 +9,7 @@ from langchain_core.messages import SystemMessage
 from langchain_core.output_parsers import JsonOutputParser
 from langgraph.graph import StateGraph, START, END
 import dotenv
-
+from pathlib import Path
 from src.parsers.document_parser import parse_raw_text_to_sections
 from src.pipeline.state import Clause, ContractEntity, ReviewStatus, ContractReviewState
 from src.pipeline.state import ClauseCategory
@@ -73,7 +73,7 @@ SYSTEM_PROMPT = """你是一个专业的法律合同条款提取专家。你的�
 
 def read_file_node() -> dict:
     """读取文本文件内容的节点"""
-    file_path = r"D:\compact\sample-contracts\sample_labor_contract.txt"
+    file_path = Path(__file__).resolve().parents[2] / "sample-contracts" / "sample_purchase_contract.txt"
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
@@ -107,7 +107,7 @@ class ClauseExtractionAgent:
         # 在 async 函数内使用 ainvoke，避免同步调用阻塞事件循环
         result = await chain.ainvoke({"text": text_content})
 
-
+        print(result)
         clauses = self._parse_clauses(result)
         entities = self._parse_entities(result)
 
