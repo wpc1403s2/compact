@@ -120,7 +120,7 @@ class RiskIdentificationAgent:
 
     def __init__(self, rag_retriever=None):
         self.llm = ChatOpenAI(
-            model_name=os.getenv("CONTRACT_LLM_MODEL", "deepseek-v4.1-flash"),
+            model_name=os.getenv("CONTRACT_LLM_MODEL", "deepseek-flash"),
             api_key=os.getenv("CONTRACT_LLM_API_KEY"),
             base_url=os.getenv("CONTRACT_LLM_BASE_URL"),
             temperature=0.0,

@@ -3,7 +3,6 @@ import os
 import json
 from typing import TypedDict, Dict, Any
 
-import logger
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage
@@ -88,7 +87,7 @@ class ClauseExtractionAgent:
     def __init__(self):
         # 初始化大语言模型 从env中获取 API Key
         self.llm = ChatOpenAI(
-            model_name=os.getenv("CONTRACT_LLM_MODEL", "deepseek-v4.1-flash"),
+            model_name=os.getenv("CONTRACT_LLM_MODEL", "deepseek-flash"),
             api_key=os.getenv("CONTRACT_LLM_API_KEY"),
             base_url=os.getenv("CONTRACT_LLM_BASE_URL"),
             temperature=0.0,

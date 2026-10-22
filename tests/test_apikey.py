@@ -3,12 +3,12 @@
 两种用法：
 
 1) 命令行（推荐，输出最直观）
-       python tests/test_apikey.py            # 校验 CONTRACT_LLM_API_KEY
-       python tests/test_apikey.py openai     # 校验 OPENAI_API_KEY
-       python tests/test_apikey.py minimax    # 校验 MINIMAX_API_KEY
+       python tests/howapikey.py            # 校验 CONTRACT_LLM_API_KEY
+       python tests/howapikey.py openai     # 校验 OPENAI_API_KEY
+       python tests/howapikey.py minimax    # 校验 MINIMAX_API_KEY
 
 2) pytest
-       python -m pytest tests/test_apikey.py -v
+       python -m pytest tests/howapikey.py -v
    未配置 Key 时自动跳过（skip），配置了才发起真实请求。
 """
 

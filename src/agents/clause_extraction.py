@@ -17,6 +17,9 @@ from __future__ import annotations
 
 import logging
 import asyncio
+import dotenv
+
+dotenv.load_dotenv()
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -34,10 +37,8 @@ from src.pipeline.state import (
     ReviewStatus,
 )
 import os
-import dotenv
-# 加载.env 配置
 
-dotenv.load_dotenv()
+# 加载.env 配置
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +94,7 @@ class ClauseExtractionAgent:
     def __init__(self):
         self.parser = DocumentParser()
         self.llm = ChatOpenAI(
-            model_name=os.getenv("CONTRACT_LLM_MODEL", "deepseek-v4.1-flash"),
+            model_name=os.getenv("CONTRACT_LLM_MODEL", "deepseek-flash"),
             api_key=os.getenv("CONTRACT_LLM_API_KEY"),
             base_url=os.getenv("CONTRACT_LLM_BASE_URL"),
             temperature=0.0,

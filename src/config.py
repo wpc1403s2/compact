@@ -59,7 +59,7 @@ class Settings:
             "CONTRACT_LLM_BASE_URL",
             "https://dashscope.aliyuncs.com/compatible-mode/v1",
         )
-        self.CONTRACT_LLM_MODEL: str = _env("CONTRACT_LLM_MODEL", "qwen3.8-max-0902")
+        self.CONTRACT_LLM_MODEL: str = _env("CONTRACT_LLM_MODEL")
 
         # MiniMax
         self.MINIMAX_API_KEY: str = _env("MINIMAX_API_KEY", "")

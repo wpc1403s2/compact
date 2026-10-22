@@ -1,2 +1,9 @@
 /.venv/
 /.claude/
+/.idea/
+/.jbeval/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
