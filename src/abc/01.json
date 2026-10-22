@@ -1,0 +1,151 @@
+{
+  "contract_type": "劳动合同",
+  "clauses": [
+    {
+      "title": "合同期限",
+      "content": "本劳动合同为固定期限合同，期限3年，自2026年4月1日起至2029年3月31日止。试用期为6个月，自2026年4月1日至2026年9月30日。",
+      "category": "other",
+      "section_number": "第一条"
+    },
+    {
+      "title": "工作内容和工作地点",
+      "content": "2.1 乙方同意在甲方AI研发部门担任高级开发工程师职务。2.2 工作地点为深圳市南山区科技园甲方办公地址。2.3 甲方有权根据业务需要调整乙方的工作岗位和工作地点。",
+      "category": "other",
+      "section_number": "第二条"
+    },
+    {
+      "title": "工作时间和休息休假",
+      "content": "3.1 甲方实行标准工时制度，每日工作8小时，每周工作5天。3.2 乙方依法享有国家规定的法定节假日和年休假。",
+      "category": "other",
+      "section_number": "第三条"
+    },
+    {
+      "title": "劳动报酬",
+      "content": "4.1 乙方月基本工资为人民币30,000元。4.2 试用期工资为正式工资的80%，即人民币24,000元。4.3 甲方有权根据经营状况酌情调整乙方薪酬。",
+      "category": "payment",
+      "section_number": "第四条"
+    },
+    {
+      "title": "社会保险和福利",
+      "content": "甲方依法为乙方缴纳社会保险（养老保险、医疗保险、失业保险、工伤保险、生育保险）和住房公积金。",
+      "category": "other",
+      "section_number": "第五条"
+    },
+    {
+      "title": "劳动保护",
+      "content": "甲方应为乙方提供符合国家规定的劳动安全卫生条件和必要的劳动防护用品。",
+      "category": "other",
+      "section_number": "第六条"
+    },
+    {
+      "title": "保密和竞业限制",
+      "content": "7.1 乙方在职期间及离职后两年内，不得泄露甲方的商业秘密和技术秘密。7.2 乙方离职后一年内不得在与甲方有竞争关系的企业任职。7.3 违反保密和竞业限制义务的，乙方应向甲方支付违约金人民币500,000元。",
+      "category": "confidentiality",
+      "section_number": "第七条"
+    },
+    {
+      "title": "合同解除",
+      "content": "8.1 乙方试用期内提前3日通知甲方，可以解除劳动合同。8.2 乙方正式期提前30日书面通知甲方，可以解除劳动合同。8.3 甲方有权随时终止合同，无需提前通知乙方。",
+      "category": "termination",
+      "section_number": "第八条"
+    },
+    {
+      "title": "争议解决",
+      "content": "因本合同引起的争议，双方应协商解决。协商不成的，可向劳动争议仲裁委员会申请仲裁。",
+      "category": "dispute_resolution",
+      "section_number": "第九条"
+    }
+  ],
+  "entities": [
+    {
+      "entity_type": "party_a",
+      "value": "深圳市人工智能科技有限公司",
+      "location": "甲方（用人单位）"
+    },
+    {
+      "entity_type": "party_b",
+      "value": "赵六",
+      "location": "乙方（劳动者）"
+    },
+    {
+      "entity_type": "address",
+      "value": "深圳市南山区科技园",
+      "location": "甲方地址"
+    },
+    {
+      "entity_type": "address",
+      "value": "广东省深圳市南山区",
+      "location": "乙方户籍地址"
+    },
+    {
+      "entity_type": "address",
+      "value": "深圳市南山区科技园甲方办公地址",
+      "location": "2.2"
+    },
+    {
+      "entity_type": "subject",
+      "value": "AI研发部门高级开发工程师",
+      "location": "2.1"
+    },
+    {
+      "entity_type": "duration",
+      "value": "3年",
+      "location": "第一条"
+    },
+    {
+      "entity_type": "duration",
+      "value": "6个月",
+      "location": "第一条/试用期"
+    },
+    {
+      "entity_type": "duration",
+      "value": "每日工作8小时，每周工作5天",
+      "location": "3.1"
+    },
+    {
+      "entity_type": "duration",
+      "value": "两年",
+      "location": "7.1"
+    },
+    {
+      "entity_type": "duration",
+      "value": "一年",
+      "location": "7.2"
+    },
+    {
+      "entity_type": "date",
+      "value": "2026年4月1日",
+      "location": "第一条/合同起始日"
+    },
+    {
+      "entity_type": "date",
+      "value": "2029年3月31日",
+      "location": "第一条/合同终止日"
+    },
+    {
+      "entity_type": "date",
+      "value": "2026年9月30日",
+      "location": "第一条/试用期终止日"
+    },
+    {
+      "entity_type": "date",
+      "value": "2026年4月1日",
+      "location": "签署日期"
+    },
+    {
+      "entity_type": "amount",
+      "value": "人民币30,000元",
+      "location": "4.1"
+    },
+    {
+      "entity_type": "amount",
+      "value": "人民币24,000元",
+      "location": "4.2"
+    },
+    {
+      "entity_type": "amount",
+      "value": "人民币500,000元",
+      "location": "7.3"
+    }
+  ]
+}
