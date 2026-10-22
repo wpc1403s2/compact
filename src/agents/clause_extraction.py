@@ -16,20 +16,28 @@
 from __future__ import annotations
 
 import logging
-
+import asyncio
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 
-from ..config import settings, get_llm
-from ..parsers.document_parser import DocumentParser, parse_raw_text_to_sections
-from ..parsers.json_parser import parse_llm_json
-from ..resilience import CircuitBreaker, get_agent_breaker, resilient_call
-from ..pipeline.state import (
+
+from src.parsers.document_parser import DocumentParser, parse_raw_text_to_sections
+from src.parsers.json_parser import parse_llm_json
+from src.resilience import CircuitBreaker, get_agent_breaker, resilient_call
+from src.pipeline.state import (
     Clause,
     ClauseCategory,
     ContractEntity,
     ContractReviewState,
     ReviewStatus,
 )
+import os
+import dotenv
+# 加载.env 配置
+
+dotenv.load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -84,69 +92,51 @@ class ClauseExtractionAgent:
 
     def __init__(self):
         self.parser = DocumentParser()
-        self.llm = None
+        self.llm = ChatOpenAI(
+            model_name=os.getenv("CONTRACT_LLM_MODEL", "deepseek-v4.1-flash"),
+            api_key=os.getenv("CONTRACT_LLM_API_KEY"),
+            base_url=os.getenv("CONTRACT_LLM_BASE_URL"),
+            temperature=0.0,
+        )
         self._breaker = get_agent_breaker("clause_extraction")
 
-    def _ensure_llm(self):
-        if self.llm is None:
-            self.llm = get_llm()
+    # def _ensure_llm(self):
+    #     if self.llm is None:
+    #         self.llm = get_llm()
 
     async def run(self, state: ContractReviewState) -> dict:
         """LangGraph节点函数：执行条款提取。"""
         logger.info("条款提取Agent开始处理 review_id=%s", state.review_id)
 
-        try:
-            raw_text = state.raw_text
-            if not raw_text and state.document_path:
-                raw_text = self.parser.parse(state.document_path)
+        # 构建 Prompt
+        prompt = ChatPromptTemplate.from_messages([
+            SystemMessage(content=SYSTEM_PROMPT),
+            ("user", "以下是需要提取信息的合同文本：\n\n{text}")
+        ])
+        # 使用 JsonOutputParser 确保输出被解析为 Python 字典
+        parser = JsonOutputParser()
+        # 构建执行链
+        chain = prompt | self.llm | parser
+        text_content = read_file_node()['text_content']
+        # 在 async 函数内使用 ainvoke，避免同步调用阻塞事件循环
+        result = await chain.ainvoke({"text": text_content})
 
-            if not raw_text:
-                return {
-                    "errors": state.errors + ["合同文本为空，无法进行条款提取"],
-                    "status": ReviewStatus.COMPLETED,
-                }
+        clauses = self._parse_clauses(result)
+        entities = self._parse_entities(result)
 
-            sections = parse_raw_text_to_sections(raw_text)
-            text_for_llm = self._prepare_text(raw_text, sections)
+        print(clauses)
+        print("=" * 10)
+        print(entities)
 
-            self._ensure_llm()
+        contract_type = result.get("contract_type", "未识别")
 
-            # 使用弹性机制调用 LLM
-            result = await resilient_call(
-                self._extract_with_llm,
-                text_for_llm,
-                max_retries=settings.LLM_MAX_RETRIES,
-                timeout_seconds=settings.LLM_TIMEOUT,
-                circuit_breaker=self._breaker,
-            )
-
-            clauses = self._parse_clauses(result)
-            entities = self._parse_entities(result)
-            contract_type = result.get("contract_type", "未识别")
-
-            logger.info(
-                "条款提取完成：%d个条款，%d个实体，合同类型=%s",
-                len(clauses), len(entities), contract_type,
-            )
-
-            return {
-                "raw_text": raw_text,
-                "clauses": clauses,
-                "entities": entities,
-                "contract_type": contract_type,
-                "status": ReviewStatus.IN_PROGRESS,
-            }
-
-        except Exception as e:
-            logger.error("条款提取Agent异常: %s", str(e))
-            return {
-                "errors": state.errors + [f"条款提取失败: {str(e)}"],
-                "status": ReviewStatus.IN_PROGRESS,
-                "raw_text": raw_text or "",
-                "clauses": self._fallback_extraction(raw_text or ""),
-                "entities": [],
-                "contract_type": "未识别",
-            }
+        return {
+            "raw_text": text_content,
+            "clauses": clauses,
+            "entities": entities,
+            "contract_type": contract_type,
+            "status": ReviewStatus.IN_PROGRESS,
+        }
 
     def _prepare_text(self, raw_text: str, sections: list[dict]) -> str:
         if len(raw_text) > 15000:
@@ -202,3 +192,17 @@ class ClauseExtractionAgent:
             )
             for s in sections
         ]
+
+def read_file_node() -> dict:
+    """读取文本文件内容的节点"""
+    file_path = r"D:\compact\sample-contracts\sample_labor_contract.txt"
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return {"text_content": content}
+    except Exception as e:
+        return {"text_content": f"读取文件出错: {str(e)}"}
+
+if __name__ == '__main__':
+    Agent=ClauseExtractionAgent()
+    asyncio.run(Agent.run(ContractReviewState()))

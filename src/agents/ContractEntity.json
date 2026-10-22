@@ -1,0 +1,87 @@
+[
+  {
+    "entity_type": "party_a",
+    "value": "深圳市人工智能科技有限公司",
+    "location": "甲方（用人单位）"
+  },
+  {
+    "entity_type": "party_b",
+    "value": "赵六",
+    "location": "乙方（劳动者）"
+  },
+  {
+    "entity_type": "address",
+    "value": "深圳市南山区科技园",
+    "location": "甲方地址"
+  },
+  {
+    "entity_type": "address",
+    "value": "广东省深圳市南山区",
+    "location": "乙方户籍地址"
+  },
+  {
+    "entity_type": "address",
+    "value": "深圳市南山区科技园甲方办公地址",
+    "location": "第二条2.2"
+  },
+  {
+    "entity_type": "subject",
+    "value": "在甲方AI研发部门担任高级开发工程师职务",
+    "location": "第二条2.1"
+  },
+  {
+    "entity_type": "amount",
+    "value": "人民币30,000元",
+    "location": "第四条4.1"
+  },
+  {
+    "entity_type": "amount",
+    "value": "人民币24,000元",
+    "location": "第四条4.2"
+  },
+  {
+    "entity_type": "amount",
+    "value": "人民币500,000元",
+    "location": "第七条7.3"
+  },
+  {
+    "entity_type": "date",
+    "value": "2026年4月1日",
+    "location": "第一条及合同签署日期"
+  },
+  {
+    "entity_type": "date",
+    "value": "2029年3月31日",
+    "location": "第一条"
+  },
+  {
+    "entity_type": "date",
+    "value": "2026年9月30日",
+    "location": "第一条"
+  },
+  {
+    "entity_type": "duration",
+    "value": "3年",
+    "location": "第一条"
+  },
+  {
+    "entity_type": "duration",
+    "value": "6个月",
+    "location": "第一条"
+  },
+  {
+    "entity_type": "duration",
+    "value": "每日工作8小时，每周工作5天",
+    "location": "第三条3.1"
+  },
+  {
+    "entity_type": "duration",
+    "value": "离职后两年",
+    "location": "第七条7.1"
+  },
+  {
+    "entity_type": "duration",
+    "value": "离职后一年",
+    "location": "第七条7.2"
+  }
+]

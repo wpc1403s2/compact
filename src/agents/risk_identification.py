@@ -14,20 +14,23 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
-
+import os
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_openai import ChatOpenAI
 
-from ..config import settings, get_llm
-from ..parsers.json_parser import parse_llm_json
-from ..pipeline.state import (
+from src.agents import ClauseExtractionAgent
+from src.config import settings, get_llm
+from src.parsers.json_parser import parse_llm_json
+from src.pipeline.state import (
     Clause,
     ContractReviewState,
     ReviewStatus,
     RiskFinding,
     RiskLevel,
 )
-from ..resilience import get_agent_breaker, resilient_call
+from src.resilience import get_agent_breaker, resilient_call
 
 logger = logging.getLogger(__name__)
 
@@ -116,13 +119,18 @@ class RiskIdentificationAgent:
     """风险识别Agent：规则预筛 + 大模型深度分析。"""
 
     def __init__(self, rag_retriever=None):
-        self.llm = None
+        self.llm = ChatOpenAI(
+            model_name=os.getenv("CONTRACT_LLM_MODEL", "deepseek-v4.1-flash"),
+            api_key=os.getenv("CONTRACT_LLM_API_KEY"),
+            base_url=os.getenv("CONTRACT_LLM_BASE_URL"),
+            temperature=0.0,
+        )
         self._rag = rag_retriever
         self._breaker = get_agent_breaker("risk_identification")
 
-    def _ensure_llm(self):
-        if self.llm is None:
-            self.llm = get_llm()
+    # def _ensure_llm(self):
+    #     if self.llm is None:
+    #         self.llm = get_llm()
 
     async def run(self, state: ContractReviewState) -> dict:
         """LangGraph节点函数：执行风险识别。"""
@@ -138,7 +146,7 @@ class RiskIdentificationAgent:
         try:
             rule_findings = self._rule_based_scan(state.clauses)
 
-            self._ensure_llm()
+            # self._ensure_llm()
             llm_findings = await resilient_call(
                 self._llm_analysis,
                 state.clauses,
@@ -146,6 +154,8 @@ class RiskIdentificationAgent:
                 timeout_seconds=settings.LLM_TIMEOUT,
                 circuit_breaker=self._breaker,
             )
+
+            llm_findings= await self._llm_analysis(state.clauses)
 
             merged = self._merge_findings(rule_findings, llm_findings)
             overall = self._calculate_overall_risk(merged)
@@ -155,7 +165,9 @@ class RiskIdentificationAgent:
                 "风险识别完成：%d个发现，整体风险=%s",
                 len(merged), overall.value,
             )
-
+            print(merged)
+            print(overall)
+            print(summary)
             return {
                 "risk_findings": merged,
                 "overall_risk_level": overall,
@@ -284,3 +296,42 @@ class RiskIdentificationAgent:
             f"整体风险等级：{overall.value}。"
             f"发现 {high} 个高风险、{medium} 个中风险、{low} 个低风险问题。"
         )
+
+async def main() -> None:
+    """串联第一步与第二步：条款提取 → 风险识别。"""
+    state = ContractReviewState()
+
+    # 1. 条款提取，把返回值写回共享状态
+    extraction = await ClauseExtractionAgent().run(state)
+    state.raw_text = extraction.get("raw_text", state.raw_text)
+    state.clauses = extraction.get("clauses", [])
+    state.entities = extraction.get("entities", [])
+    state.contract_type = extraction.get("contract_type", state.contract_type)
+    state.status = extraction.get("status", state.status)
+
+    logger.info(
+        "条款提取完成：合同类型=%s，条款数=%d，实体数=%d",
+        state.contract_type, len(state.clauses), len(state.entities),
+    )
+
+    # 2. 风险识别，结果同样写回共享状态
+    risk = await RiskIdentificationAgent().run(state)
+    state.risk_findings = risk.get("risk_findings", [])
+    state.overall_risk_level = risk.get("overall_risk_level", state.overall_risk_level)
+    state.risk_summary = risk.get("risk_summary", "")
+    state.needs_human_review = risk.get("needs_human_review", state.needs_human_review)
+    state.errors = state.errors + risk.get("errors", [])
+
+    print("=" * 20, "风险识别结果", "=" * 20)
+    print(f"整体风险等级: {state.overall_risk_level.value}")
+    print(f"风险总结: {state.risk_summary}")
+    for finding in state.risk_findings:
+        print(
+            f"- [{finding.risk_level.value}] {finding.risk_type} "
+            f"(条款 {finding.clause_id}): {finding.description}"
+        )
+    print(f"发现总数: {len(state.risk_findings)}")
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
