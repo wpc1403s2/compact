@@ -1,0 +1,17 @@
+{
+  "A类": {
+    "margin_rate": 0.25,
+    "sinosure_limit": 5000000.0,
+    "compensation_ratio": 0.90
+  },
+  "B类": {
+    "margin_rate": 0.20,
+    "sinosure_limit": 2000000.0,
+    "compensation_ratio": 0.85
+  },
+  "C类": {
+    "margin_rate": 0.35,
+    "sinosure_limit": 500000.0,
+    "compensation_ratio": 0.80
+  }
+}

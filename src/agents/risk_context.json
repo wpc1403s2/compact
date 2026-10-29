@@ -1,0 +1,369 @@
+{
+  "review_id": "dfc535f4-04fd-4162-bf65-d922b15e9494",
+  "status": "in_progress",
+  "created_at": "2026-10-29T14:55:12.129383",
+  "updated_at": null,
+  "document_path": "",
+  "original_filename": "",
+  "raw_text": "采购合同\n\n合同编号：SAMPLE-2026-001\n签订日期：2026年4月1日\n\n甲方（采购方）：北京科技有限公司\n地址：北京市海淀区中关村南大街1号\n法定代表人：张三\n\n乙方（供应方）：上海智能科技有限公司\n地址：上海市浦东新区张江高科技园区\n法定代表人：李四\n\n第一条 标的物\n\n甲方向乙方采购智能合同审查软件系统一套，包含以下模块：\n1. 条款提取模块\n2. 风险识别模块\n3. 合规检查模块\n4. 修改建议模块\n\n第二条 价款与支付\n\n2.1 合同总价款为人民币500,000元（伍拾万元整）。\n2.2 甲方应在合同签订后5个工作日内支付预付款，金额为合同总价的30%，即人民币150,000元。\n2.3 乙方完成系统交付并通过验收后，甲方在15个工作日内支付剩余70%款项。\n\n第三条 交付与验收\n\n3.1 乙方应在合同签订后60日内完成系统交付。\n3.2 甲方应在收到交付物后15个工作日内完成验收。\n3.3 如验收不合格，乙方应在10个工作日内完成修改并重新提交。\n\n第四条 知识产权\n\n4.1 乙方开发的全部知识产权归甲方所有，乙方不可撤销地转让全部知识产权给甲方。\n4.2 乙方保证交付物不侵犯任何第三方的知识产权。\n\n第五条 保密条款\n\n5.1 双方应对本合同内容及履行过程中获知的对方商业秘密承担永久保密义务。\n5.2 保密义务不因合同终止而终止。\n5.3 违反保密义务的一方应承担全部损失赔偿责任。\n\n第六条 违约责任\n\n6.1 乙方逾期交付的，每逾期一日，应向甲方支付合同总价0.5%的违约金。\n6.2 甲方逾期付款的，每逾期一日，应向乙方支付逾期付款金额0.05%的违约金。\n6.3 如任一方严重违约，守约方有权单方解除合同，违约方应赔偿守约方全部损失。\n6.4 违约金不低于合同总价的30%，且不设上限。\n\n第七条 不可抗力\n\n因不可抗力导致合同无法履行的，遭受不可抗力的一方应在事件发生后5日内书面通知另一方，并提供相关证明。双方可视情况而定协商解决。\n\n第八条 争议解决\n\n8.1 本合同的签订、履行、变更、终止等一切争议，双方应友好协商解决。\n8.2 协商不成的，任何一方均可向甲方所在地人民法院提起诉讼。\n\n第九条 合同期限\n\n本合同自双方签字盖章之日起生效，有效期至2027年3月31日。合同到期后，如双方均未提出异议，则自动续约一年。\n\n第十条 其他条款\n\n10.1 本合同未尽事宜，双方另行协商确定。\n10.2 本合同一式两份，双方各执一份，具有同等法律效力。\n\n甲方（盖章）：________________    乙方（盖章）：________________\n\n日期：2026年4月1日              日期：2026年4月1日\n",
+  "clauses": [
+    {
+      "id": "58631938",
+      "title": "标的物",
+      "content": "甲方向乙方采购智能合同审查软件系统一套，包含以下模块：\n1. 条款提取模块\n2. 风险识别模块\n3. 合规检查模块\n4. 修改建议模块",
+      "category": "other",
+      "section_number": "第一条",
+      "entities": []
+    },
+    {
+      "id": "23c551ba",
+      "title": "价款与支付",
+      "content": "2.1 合同总价款为人民币500,000元（伍拾万元整）。\n2.2 甲方应在合同签订后5个工作日内支付预付款，金额为合同总价的30%，即人民币150,000元。\n2.3 乙方完成系统交付并通过验收后，甲方在15个工作日内支付剩余70%款项。",
+      "category": "payment",
+      "section_number": "第二条",
+      "entities": []
+    },
+    {
+      "id": "613b82d9",
+      "title": "交付与验收",
+      "content": "3.1 乙方应在合同签订后60日内完成系统交付。\n3.2 甲方应在收到交付物后15个工作日内完成验收。\n3.3 如验收不合格，乙方应在10个工作日内完成修改并重新提交。",
+      "category": "other",
+      "section_number": "第三条",
+      "entities": []
+    },
+    {
+      "id": "9443b880",
+      "title": "知识产权",
+      "content": "4.1 乙方开发的全部知识产权归甲方所有，乙方不可撤销地转让全部知识产权给甲方。\n4.2 乙方保证交付物不侵犯任何第三方的知识产权。",
+      "category": "intellectual_property",
+      "section_number": "第四条",
+      "entities": []
+    },
+    {
+      "id": "8a5a14da",
+      "title": "保密条款",
+      "content": "5.1 双方应对本合同内容及履行过程中获知的对方商业秘密承担永久保密义务。\n5.2 保密义务不因合同终止而终止。\n5.3 违反保密义务的一方应承担全部损失赔偿责任。",
+      "category": "confidentiality",
+      "section_number": "第五条",
+      "entities": []
+    },
+    {
+      "id": "f1e72403",
+      "title": "违约责任",
+      "content": "6.1 乙方逾期交付的，每逾期一日，应向甲方支付合同总价0.5%的违约金。\n6.2 甲方逾期付款的，每逾期一日，应向乙方支付逾期付款金额0.05%的违约金。\n6.3 如任一方严重违约，守约方有权单方解除合同，违约方应赔偿守约方全部损失。\n6.4 违约金不低于合同总价的30%，且不设上限。",
+      "category": "liability",
+      "section_number": "第六条",
+      "entities": []
+    },
+    {
+      "id": "13b02db3",
+      "title": "不可抗力",
+      "content": "因不可抗力导致合同无法履行的，遭受不可抗力的一方应在事件发生后5日内书面通知另一方，并提供相关证明。双方可视情况而定协商解决。",
+      "category": "force_majeure",
+      "section_number": "第七条",
+      "entities": []
+    },
+    {
+      "id": "82115bef",
+      "title": "争议解决",
+      "content": "8.1 本合同的签订、履行、变更、终止等一切争议，双方应友好协商解决。\n8.2 协商不成的，任何一方均可向甲方所在地人民法院提起诉讼。",
+      "category": "dispute_resolution",
+      "section_number": "第八条",
+      "entities": []
+    },
+    {
+      "id": "aeaac627",
+      "title": "合同期限",
+      "content": "本合同自双方签字盖章之日起生效，有效期至2027年3月31日。合同到期后，如双方均未提出异议，则自动续约一年。",
+      "category": "other",
+      "section_number": "第九条",
+      "entities": []
+    },
+    {
+      "id": "2df4df25",
+      "title": "其他条款",
+      "content": "10.1 本合同未尽事宜，双方另行协商确定。\n10.2 本合同一式两份，双方各执一份，具有同等法律效力。",
+      "category": "other",
+      "section_number": "第十条",
+      "entities": []
+    }
+  ],
+  "entities": [
+    {
+      "entity_type": "party_a",
+      "value": "北京科技有限公司",
+      "location": "合同首部甲方（采购方）"
+    },
+    {
+      "entity_type": "address",
+      "value": "北京市海淀区中关村南大街1号",
+      "location": "合同首部甲方地址"
+    },
+    {
+      "entity_type": "party_b",
+      "value": "上海智能科技有限公司",
+      "location": "合同首部乙方（供应方）"
+    },
+    {
+      "entity_type": "address",
+      "value": "上海市浦东新区张江高科技园区",
+      "location": "合同首部乙方地址"
+    },
+    {
+      "entity_type": "subject",
+      "value": "智能合同审查软件系统一套（含条款提取模块、风险识别模块、合规检查模块、修改建议模块）",
+      "location": "第一条"
+    },
+    {
+      "entity_type": "amount",
+      "value": "人民币500,000元（伍拾万元整）",
+      "location": "第二条2.1"
+    },
+    {
+      "entity_type": "amount",
+      "value": "合同总价的30%",
+      "location": "第二条2.2"
+    },
+    {
+      "entity_type": "amount",
+      "value": "人民币150,000元",
+      "location": "第二条2.2"
+    },
+    {
+      "entity_type": "duration",
+      "value": "合同签订后5个工作日内",
+      "location": "第二条2.2"
+    },
+    {
+      "entity_type": "amount",
+      "value": "剩余70%款项",
+      "location": "第二条2.3"
+    },
+    {
+      "entity_type": "duration",
+      "value": "15个工作日内",
+      "location": "第二条2.3"
+    },
+    {
+      "entity_type": "duration",
+      "value": "合同签订后60日内",
+      "location": "第三条3.1"
+    },
+    {
+      "entity_type": "duration",
+      "value": "收到交付物后15个工作日内",
+      "location": "第三条3.2"
+    },
+    {
+      "entity_type": "duration",
+      "value": "10个工作日内",
+      "location": "第三条3.3"
+    },
+    {
+      "entity_type": "duration",
+      "value": "永久保密义务",
+      "location": "第五条5.1"
+    },
+    {
+      "entity_type": "amount",
+      "value": "合同总价0.5%",
+      "location": "第六条6.1"
+    },
+    {
+      "entity_type": "duration",
+      "value": "每逾期一日",
+      "location": "第六条6.1、第六条6.2"
+    },
+    {
+      "entity_type": "amount",
+      "value": "逾期付款金额0.05%",
+      "location": "第六条6.2"
+    },
+    {
+      "entity_type": "amount",
+      "value": "合同总价的30%",
+      "location": "第六条6.4"
+    },
+    {
+      "entity_type": "duration",
+      "value": "事件发生后5日内",
+      "location": "第七条"
+    },
+    {
+      "entity_type": "date",
+      "value": "2026年4月1日",
+      "location": "合同首部签订日期及文末日期"
+    },
+    {
+      "entity_type": "date",
+      "value": "2027年3月31日",
+      "location": "第九条"
+    },
+    {
+      "entity_type": "duration",
+      "value": "自双方签字盖章之日起生效，有效期至2027年3月31日；到期后如双方均未提出异议则自动续约一年",
+      "location": "第九条"
+    }
+  ],
+  "contract_type": "采购合同",
+  "risk_findings": [
+    {
+      "clause_id": "8a5a14da",
+      "risk_level": "high",
+      "risk_type": "unlimited_liability",
+      "description": "条款包含无限责任相关表述（命中关键词：承担全部）",
+      "buyer_impact": "",
+      "seller_impact": "",
+      "rationale": "规则引擎检测：条款「保密条款」中包含「承担全部」"
+    },
+    {
+      "clause_id": "f1e72403",
+      "risk_level": "high",
+      "risk_type": "unilateral_termination",
+      "description": "条款包含单方解除权（命中关键词：单方解除）",
+      "buyer_impact": "",
+      "seller_impact": "",
+      "rationale": "规则引擎检测：条款「违约责任」中包含「单方解除」"
+    },
+    {
+      "clause_id": "f1e72403",
+      "risk_level": "medium",
+      "risk_type": "unfair_penalty",
+      "description": "违约金条款可能不合理（命中关键词：违约金不低于）",
+      "buyer_impact": "",
+      "seller_impact": "",
+      "rationale": "规则引擎检测：条款「违约责任」中包含「违约金不低于」"
+    },
+    {
+      "clause_id": "13b02db3",
+      "risk_level": "low",
+      "risk_type": "vague_terms",
+      "description": "条款表述模糊，存在歧义风险（命中关键词：视情况而定）",
+      "buyer_impact": "",
+      "seller_impact": "",
+      "rationale": "规则引擎检测：条款「不可抗力」中包含「视情况而定」"
+    },
+    {
+      "clause_id": "aeaac627",
+      "risk_level": "medium",
+      "risk_type": "auto_renewal",
+      "description": "包含自动续约条款（命中关键词：自动续约）",
+      "buyer_impact": "",
+      "seller_impact": "",
+      "rationale": "规则引擎检测：条款「合同期限」中包含「自动续约」"
+    },
+    {
+      "clause_id": "2df4df25",
+      "risk_level": "low",
+      "risk_type": "vague_terms",
+      "description": "条款表述模糊，存在歧义风险（命中关键词：另行协商）",
+      "buyer_impact": "",
+      "seller_impact": "",
+      "rationale": "规则引擎检测：条款「其他条款」中包含「另行协商」"
+    },
+    {
+      "clause_id": "58631938",
+      "risk_level": "medium",
+      "risk_type": "vague_terms,missing_protection",
+      "description": "标的物仅列明四个模块，未明确功能规格、性能指标、交付形式、部署方式、接口要求及验收标准。",
+      "buyer_impact": "交付范围不清晰，验收时易发生争议，可能无法获得满足业务需求的系统。",
+      "seller_impact": "需求边界不清，易产生范围蔓延和验收争议，增加交付成本。",
+      "rationale": "软件采购合同需明确功能、性能、技术指标和交付物清单，否则履行标准不确定。"
+    },
+    {
+      "clause_id": "23c551ba",
+      "risk_level": "medium",
+      "risk_type": "payment_risk",
+      "description": "约定30%预付款和验收后支付70%尾款，但未约定预付款退还、履约担保、发票开具及逾期验收的付款安排。",
+      "buyer_impact": "预付15万元后如乙方交付失败，需追回款项，存在资金回收风险。",
+      "seller_impact": "尾款依赖甲方验收，若验收拖延或标准不明，回款周期和现金流受影响。",
+      "rationale": "付款节点与验收挂钩，但缺少退款、担保及验收拖延时的处理机制。"
+    },
+    {
+      "clause_id": "613b82d9",
+      "risk_level": "medium",
+      "risk_type": "vague_terms,missing_protection",
+      "description": "约定交付和验收期限，但未明确验收标准、验收方法、修改次数上限及甲方逾期不验收的后果。",
+      "buyer_impact": "验收标准不明可能导致系统质量争议，难以有效主张不合格。",
+      "seller_impact": "甲方拖延验收将直接影响尾款回收，且修改范围可能无限扩大。",
+      "rationale": "验收条款应包含标准、流程、期限及逾期不验收视为通过的规则。"
+    },
+    {
+      "clause_id": "9443b880",
+      "risk_level": "high",
+      "risk_type": "ip_risk",
+      "description": "约定乙方全部知识产权不可撤销归甲方所有，未区分背景知识产权、前景知识产权、第三方软件及开源组件。",
+      "buyer_impact": "可能取得存在权利瑕疵的成果，若含乙方无权转让的背景技术或第三方权利，甲方权利不完整。",
+      "seller_impact": "可能丧失背景技术、通用组件和方法论，影响后续复用和业务开展，责任过重。",
+      "rationale": "知识产权转让范围过宽且未设例外，缺少第三方/开源许可安排及侵权赔偿范围限定。"
+    },
+    {
+      "clause_id": "8a5a14da",
+      "risk_level": "medium",
+      "risk_type": "confidentiality_risk,unfair_penalty",
+      "description": "约定永久保密且违反保密义务承担全部损失赔偿，未限定保密信息范围、例外情形及返还销毁义务。",
+      "buyer_impact": "承担永久保密和无限赔偿风险，保密范围不清可能导致正常使用受限。",
+      "seller_impact": "同样承担永久保密和全部损失赔偿责任，且缺少公开信息等例外抗辩。",
+      "rationale": "保密期限过长、范围及例外缺失，赔偿无上限，条款合理性和可执行性存疑。"
+    },
+    {
+      "clause_id": "f1e72403",
+      "risk_level": "high",
+      "risk_type": "unfair_penalty,unilateral_termination,unlimited_liability",
+      "description": "乙方逾期违约金为合同总价每日0.5%，甲方逾期付款为逾期金额每日0.05%；违约金不低于30%且不设上限，严重违约可单方解除并赔偿全部损失。",
+      "buyer_impact": "可主张高额违约金，但标准过高可能被法院调减，单方解除条件模糊亦可能引发争议。",
+      "seller_impact": "逾期成本极高，可能承担无上限赔偿和合同总价30%以上违约金，风险重大。",
+      "rationale": "违约金标准不对等且明显过高，无上限及宽泛解除权违反公平和可预见性原则。"
+    },
+    {
+      "clause_id": "13b02db3",
+      "risk_level": "medium",
+      "risk_type": "vague_terms,missing_protection",
+      "description": "不可抗力条款仅约定5日内通知并提供证明，后果为双方视情况协商，未明确延期、免责及解除安排。",
+      "buyer_impact": "项目延期或无法履行时救济不明确，难以及时主张权利。",
+      "seller_impact": "通知期限较短，逾期可能失权，且不可抗力后果不确定。",
+      "rationale": "不可抗力条款缺少定义、通知逾期后果及合同解除/延期机制。"
+    },
+    {
+      "clause_id": "82115bef",
+      "risk_level": "low",
+      "risk_type": "jurisdiction_risk",
+      "description": "约定协商不成由甲方所在地人民法院诉讼管辖。",
+      "buyer_impact": "管辖对其便利，诉讼成本较低。",
+      "seller_impact": "异地诉讼成本较高，但管辖约定通常有效。",
+      "rationale": "管辖连接点单一且偏向甲方，但属于常见有效约定。"
+    },
+    {
+      "clause_id": "aeaac627",
+      "risk_level": "medium",
+      "risk_type": "auto_renewal_risk",
+      "description": "合同到期后双方均未提出异议则自动续约一年，未约定续约价格、通知方式、异议程序及续约次数上限。",
+      "buyer_impact": "可能因疏忽被自动续约绑定，续约价格和服务内容不明确。",
+      "seller_impact": "续约安排不确定，价格调整和服务范围缺乏依据。",
+      "rationale": "自动续约条款需明确续约条件、价格、通知期限和退出机制。"
+    },
+    {
+      "clause_id": "2df4df25",
+      "risk_level": "low",
+      "risk_type": "vague_terms,missing_protection",
+      "description": "约定未尽事宜另行协商，未明确补充协议形式、通知送达、合同转让及完整协议等事项。",
+      "buyer_impact": "发生未约定事项时缺少明确处理依据。",
+      "seller_impact": "同样可能因补充协议形式不明产生争议。",
+      "rationale": "兜底条款常见，但建议补充书面修改、通知和完整协议条款。"
+    }
+  ],
+  "overall_risk_level": "high",
+  "risk_summary": "整体风险等级：high。发现 4 个高风险、8 个中风险、4 个低风险问题。",
+  "compliance_findings": [],
+  "overall_compliance": "needs_review",
+  "missing_clauses": [],
+  "suggestions": [],
+  "version_diff": "",
+  "needs_human_review": true,
+  "human_feedback": null,
+  "errors": [],
+  "current_step": "",
+  "step_log": [],
+  "progress": 0.0,
+  "messages": []
+}

@@ -15,8 +15,11 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import os
+
+from pathlib import Path
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
@@ -321,6 +324,26 @@ async def main() -> None:
     state.risk_summary = risk.get("risk_summary", "")
     state.needs_human_review = risk.get("needs_human_review", state.needs_human_review)
     state.errors = state.errors + risk.get("errors", [])
+
+    # state 写入 risk_context.json
+    # 存在先删除
+
+
+    risk_context_path=Path(__file__).resolve().parent/"risk_context.json"
+    # 存在先删除
+    if risk_context_path.exists():
+        risk_context_path.unlink()
+
+    # state 写入 risk_context.json
+    risk_context = json.loads(state.model_dump_json())
+    risk_context_path.write_text(
+        json.dumps(risk_context, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+    logger.info("风险上行文已写入 %s",risk_context_path)
+
 
     print("=" * 20, "风险识别结果", "=" * 20)
     print(f"整体风险等级: {state.overall_risk_level.value}")
