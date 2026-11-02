@@ -13,6 +13,8 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
+from langchain_core.output_parsers import PydanticOutputParser
+
 import asyncio
 from docx import Document
 
@@ -120,18 +122,21 @@ async def reasoning_node(state: ContractState) -> ContractState:
     
     return {"messages": [response]}
 
+
 async def formatting_node(state: ContractState) -> ContractState:
-    """格式化节点：汇总历史消息与工具计算结果，强制输出结构化JSON"""
-    structured_llm = llm.with_structured_output(FinancialAuditResult)
-    
+    """格式化节点：使用纯提示词 + Parser 解析，不依赖任何底层特殊 API 参数"""
+    parser = PydanticOutputParser(pydantic_object=FinancialAuditResult)
+
     formatting_prompt = ChatPromptTemplate.from_messages([
-        ("system", "你是一名财务风控专家，请根据之前的对话与敞口计算结果，生成最终的结构化财务审核报告。"),
+        ("system",
+         "你是一名财务风控专家，请根据之前的对话与敞口计算结果，生成最终的结构化财务审核报告。\n\n请严格按照以下格式输出 JSON：\n{format_instructions}"),
         MessagesPlaceholder(variable_name="messages"),
-    ])
-    
-    chain = formatting_prompt | structured_llm
+    ]).partial(format_instructions=parser.get_format_instructions())
+
+    # 直接使用普通 llm 配合 parser
+    chain = formatting_prompt | llm | parser
     result = await chain.ainvoke({"messages": state["messages"]})
-    
+
     return {"audit_result": result}
 
 # ==========================================
@@ -162,7 +167,7 @@ async def load_business_config(filepath: str = "risk_config.json") -> dict:
         return json.loads(content)
 
 # 读取 D:\compact\sample-contracts\储能系统合同0809.docx 文件
-async def _read_docx_sync(filepath:str)->str:
+def _read_docx_sync(filepath:str)->str:
     doc=Document(filepath)
     full_text=[]
     for para in doc.paragraphs:
@@ -172,7 +177,7 @@ async def _read_docx_sync(filepath:str)->str:
 
 async def run_financial_audit():
     # 1. 模拟业务输入
-    file_path=r"D:\compact\sample-contracts\储能系统合同0809.docx"
+    file_path= r"/sample-contracts/储能系统合同0809.docx"
     try:
         test_contract=await asyncio.to_thread(_read_docx_sync,file_path)
         print("读取成功，内容如下")
