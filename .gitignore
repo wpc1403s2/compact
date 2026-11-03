@@ -2,6 +2,7 @@
 /.claude/
 /.idea/
 /.jbeval/
+/sample-contracts/
 
 # Python
 __pycache__/
